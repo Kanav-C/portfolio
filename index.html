@@ -3,1126 +3,540 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kanav Chatley — AI/ML Engineer</title>
+  <title>Kanav Chatley — Quantitative Researcher</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #0a0c10;
-      --surface: #10141c;
-      --surface2: #161b26;
-      --border: rgba(255,255,255,0.07);
-      --amber: #f5a623;
-      --amber-dim: rgba(245,166,35,0.12);
-      --amber-glow: rgba(245,166,35,0.25);
-      --text: #e8e4db;
-      --text-muted: #6b7280;
-      --text-dim: #9ca3af;
-      --white: #ffffff;
+      --bg: #04080f;
+      --bg2: #070d18;
+      --surface: #0a1220;
+      --surface2: #0e1a2e;
+      --border: rgba(0,200,120,0.1);
+      --border2: rgba(0,200,120,0.22);
+      --green: #00c878;
+      --green-dim: rgba(0,200,120,0.08);
+      --red: #ff4d4d;
+      --blue: #4da6ff;
+      --yellow: #e5c07b;
+      --text: #c8d8e8;
+      --text-muted: #4a6480;
+      --text-dim: #7a9ab8;
+      --white: #e8f0f8;
     }
-
     html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; overflow-x: hidden; cursor: none; }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Syne', sans-serif;
-      overflow-x: hidden;
-    }
+    /* CURSOR */
+    .cursor { position: fixed; width: 8px; height: 8px; background: var(--green); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: screen; transition: width .15s, height .15s; }
+    .cursor-ring { position: fixed; width: 32px; height: 32px; border: 1px solid rgba(0,200,120,0.35); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); }
 
-    /* ── NOISE OVERLAY ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-    }
+    /* SCANLINES */
+    body::after { content:''; position:fixed; inset:0; z-index:1; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px); pointer-events:none; }
 
-    /* ── NAV ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.25rem 4rem;
-      backdrop-filter: blur(20px);
-      background: rgba(10,12,16,0.85);
-      border-bottom: 1px solid var(--border);
-    }
+    /* TICKER */
+    .ticker-wrap { position:fixed; top:0; left:0; right:0; z-index:200; background:var(--surface); border-bottom:1px solid var(--border); overflow:hidden; height:30px; display:flex; align-items:center; }
+    .ticker-track { display:flex; animation:ticker 40s linear infinite; white-space:nowrap; }
+    .ticker-item { font-family:'IBM Plex Mono',monospace; font-size:0.65rem; padding:0 2.5rem; display:flex; align-items:center; gap:0.6rem; color:var(--text-muted); }
+    .ticker-item .sym { color:var(--text-dim); font-weight:500; }
+    .ticker-item .up { color:var(--green); }
+    .ticker-item .dn { color:var(--red); }
+    @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
-    .nav-logo {
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.25rem;
-      color: var(--amber);
-      letter-spacing: -0.02em;
-    }
+    /* NAV */
+    nav { position:fixed; top:30px; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:0.85rem 3rem; background:rgba(4,8,15,0.96); backdrop-filter:blur(24px); border-bottom:1px solid var(--border); }
+    .nav-logo { font-family:'IBM Plex Mono',monospace; font-size:0.82rem; font-weight:600; color:var(--green); letter-spacing:0.1em; display:flex; align-items:center; gap:0.5rem; }
+    .nav-logo::before { content:'▶'; font-size:0.55rem; animation:blink 1.2s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .nav-links { display:flex; gap:2rem; list-style:none; }
+    .nav-links a { font-family:'IBM Plex Mono',monospace; font-size:0.68rem; color:var(--text-muted); text-decoration:none; letter-spacing:0.1em; text-transform:uppercase; transition:color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color:var(--green); }
 
-    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
-    .nav-links a {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.75rem;
-      font-weight: 400;
-      color: var(--text-muted);
-      text-decoration: none;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--amber); }
+    /* HERO */
+    #hero { min-height:100vh; padding:130px 3rem 4rem; display:grid; grid-template-columns:1fr 400px; gap:4rem; align-items:center; position:relative; overflow:hidden; }
+    .hero-grid { position:absolute; inset:0; background-image:linear-gradient(rgba(0,200,120,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,120,0.04) 1px,transparent 1px); background-size:48px 48px; animation:gridShift 20s linear infinite; }
+    @keyframes gridShift { from{background-position:0 0} to{background-position:48px 48px} }
+    .hero-left { position:relative; z-index:2; }
+    .hero-status { font-family:'IBM Plex Mono',monospace; font-size:0.66rem; letter-spacing:0.15em; color:var(--green); display:flex; align-items:center; gap:0.75rem; margin-bottom:1.75rem; text-transform:uppercase; }
+    .status-dot { width:7px; height:7px; background:var(--green); border-radius:50%; box-shadow:0 0 8px var(--green); animation:pulse 2s ease infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 8px var(--green)} 50%{box-shadow:0 0 22px var(--green)} }
+    h1 { font-family:'Playfair Display',serif; font-size:clamp(2.8rem,6vw,5.2rem); line-height:1.05; letter-spacing:-0.02em; color:var(--white); }
+    h1 .role { display:block; font-style:italic; color:var(--green); font-size:0.72em; margin-top:0.15em; }
+    .hero-tagline { font-family:'IBM Plex Mono',monospace; font-size:0.77rem; color:var(--text-muted); margin:1.6rem 0 2.2rem; line-height:2; max-width:520px; border-left:2px solid var(--border2); padding-left:1rem; }
+    .hero-tagline span { color:var(--green); }
+    .hero-ctas { display:flex; gap:1rem; flex-wrap:wrap; }
+    .btn-primary { font-family:'IBM Plex Mono',monospace; font-size:0.72rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; padding:0.8rem 1.8rem; background:var(--green); color:#04080f; border-radius:2px; transition:all 0.2s; display:inline-block; }
+    .btn-primary:hover { background:#00ff9d; box-shadow:0 0 30px rgba(0,200,120,0.4); transform:translateY(-2px); }
+    .btn-outline { font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; padding:0.8rem 1.8rem; border:1px solid var(--border2); color:var(--text-dim); border-radius:2px; transition:all 0.2s; display:inline-block; }
+    .btn-outline:hover { border-color:var(--green); color:var(--green); }
 
-    /* ── HERO ── */
-    #hero {
-      min-height: 100vh;
-      display: flex; align-items: center;
-      padding: 0 4rem;
-      position: relative;
-      overflow: hidden;
-    }
+    /* TERMINAL */
+    .terminal { position:relative; z-index:2; background:var(--surface); border:1px solid var(--border2); border-radius:6px; overflow:hidden; font-family:'IBM Plex Mono',monospace; font-size:0.72rem; box-shadow:0 0 60px rgba(0,200,120,0.07),0 40px 80px rgba(0,0,0,0.6); }
+    .term-bar { background:var(--surface2); border-bottom:1px solid var(--border); padding:0.6rem 1rem; display:flex; align-items:center; gap:0.5rem; }
+    .t-dot { width:10px; height:10px; border-radius:50%; }
+    .t-dot.r{background:#ff5f57} .t-dot.y{background:#febc2e} .t-dot.g{background:#28c840}
+    .term-title { margin-left:auto; font-size:0.6rem; color:var(--text-muted); letter-spacing:0.1em; }
+    .term-body { padding:1.25rem; line-height:2.1; }
+    .tl { display:block; }
+    .tp { color:var(--green); } .tc { color:var(--white); } .to { color:var(--text-muted); padding-left:1rem; display:block; }
+    .tv { color:var(--blue); } .tpos { color:var(--green); } .tneg { color:var(--red); } .tk { color:var(--yellow); }
+    .t-cursor { display:inline-block; width:8px; height:14px; background:var(--green); vertical-align:middle; animation:blink 1s step-end infinite; }
 
-    .hero-grid-bg {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(245,166,35,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(245,166,35,0.04) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
-    }
+    /* SECTIONS */
+    section { padding:5rem 3rem; position:relative; }
+    section:nth-child(even) { background:var(--bg2); }
+    .sec-header { display:flex; align-items:center; gap:1.5rem; margin-bottom:3rem; }
+    .sec-num { font-family:'IBM Plex Mono',monospace; font-size:0.62rem; color:var(--green); letter-spacing:0.2em; opacity:0.6; }
+    .sec-title { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,3.5vw,2.5rem); color:var(--white); letter-spacing:-0.02em; line-height:1.1; }
+    .sec-title em { font-style:italic; color:var(--green); }
+    .sec-line { flex:1; height:1px; background:var(--border); }
 
-    .hero-glow {
-      position: absolute;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(245,166,35,0.08) 0%, transparent 70%);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-    }
+    /* ABOUT */
+    .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:start; }
+    .about-text p { font-size:0.93rem; color:var(--text-dim); line-height:1.9; margin-bottom:1.2rem; font-weight:300; }
+    .about-text strong { color:var(--green); font-weight:500; }
+    .tag-cloud { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:1.5rem; }
+    .tag-pill { font-family:'IBM Plex Mono',monospace; font-size:0.65rem; padding:0.3rem 0.75rem; background:var(--green-dim); border:1px solid var(--border2); color:var(--green); border-radius:2px; }
+    .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-bottom:1.5rem; }
+    .stat-cell { background:var(--surface); padding:1.25rem; transition:background 0.2s; }
+    .stat-cell:hover { background:var(--surface2); }
+    .stat-num { font-family:'IBM Plex Mono',monospace; font-size:1.65rem; font-weight:600; color:var(--green); line-height:1; margin-bottom:0.3rem; }
+    .stat-lbl { font-family:'IBM Plex Mono',monospace; font-size:0.59rem; color:var(--text-muted); letter-spacing:0.1em; text-transform:uppercase; }
 
-    .hero-content { position: relative; max-width: 900px; }
+    /* EXPERIENCE */
+    .exp-item { display:grid; grid-template-columns:190px 1fr; border-bottom:1px solid var(--border); padding:2.5rem 0; gap:0; }
+    .exp-item:last-child { border-bottom:none; }
+    .exp-left { padding-right:2rem; border-right:1px solid var(--border); }
+    .exp-period { font-family:'IBM Plex Mono',monospace; font-size:0.65rem; color:var(--text-muted); line-height:1.9; }
+    .exp-current { color:var(--green); font-weight:500; display:flex; align-items:center; gap:0.4rem; margin-bottom:0.2rem; font-family:'IBM Plex Mono',monospace; font-size:0.65rem; }
+    .exp-current::before { content:''; width:6px; height:6px; background:var(--green); border-radius:50%; box-shadow:0 0 6px var(--green); animation:pulse 2s infinite; flex-shrink:0; }
+    .exp-right { padding-left:2.5rem; }
+    .exp-role { font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; color:var(--white); margin-bottom:0.2rem; }
+    .exp-company { font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--green); letter-spacing:0.07em; margin-bottom:1.2rem; }
+    .exp-bullets { list-style:none; display:flex; flex-direction:column; gap:0.65rem; }
+    .exp-bullets li { font-size:0.87rem; color:var(--text-dim); line-height:1.75; font-weight:300; padding-left:1.5rem; position:relative; }
+    .exp-bullets li::before { content:'//'; position:absolute; left:0; font-family:'IBM Plex Mono',monospace; font-size:0.62rem; color:var(--green); opacity:0.5; top:0.15rem; }
+    .exp-tags { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:1.2rem; }
+    .exp-tag { font-family:'IBM Plex Mono',monospace; font-size:0.58rem; padding:0.2rem 0.6rem; border:1px solid var(--border); color:var(--text-muted); border-radius:2px; letter-spacing:0.04em; }
 
-    .hero-tag {
-      display: inline-block;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--amber);
-      background: var(--amber-dim);
-      border: 1px solid rgba(245,166,35,0.2);
-      padding: 0.35rem 0.9rem;
-      border-radius: 2px;
-      margin-bottom: 2rem;
-      animation: fadeUp 0.8s ease both;
-    }
+    /* PROJECTS */
+    .projects-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; }
+    .proj-card { background:var(--surface); padding:2rem; transition:background 0.2s; position:relative; overflow:hidden; }
+    .proj-card::after { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--green),transparent); opacity:0; transition:opacity 0.25s; }
+    .proj-card:hover { background:var(--surface2); }
+    .proj-card:hover::after { opacity:1; }
+    .proj-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; }
+    .proj-num { font-family:'IBM Plex Mono',monospace; font-size:0.6rem; color:var(--green); opacity:0.5; letter-spacing:0.1em; }
+    .proj-type { font-family:'IBM Plex Mono',monospace; font-size:0.58rem; padding:0.2rem 0.6rem; background:var(--green-dim); border:1px solid var(--border2); color:var(--green); border-radius:2px; }
+    .proj-title { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--white); margin-bottom:0.75rem; line-height:1.3; }
+    .proj-desc { font-size:0.82rem; color:var(--text-muted); line-height:1.75; font-weight:300; }
+    .proj-stack { margin-top:1.25rem; display:flex; flex-wrap:wrap; gap:0.4rem; }
+    .proj-stack span { font-family:'IBM Plex Mono',monospace; font-size:0.58rem; color:var(--text-muted); border:1px solid var(--border); padding:0.2rem 0.5rem; border-radius:2px; }
 
-    h1 {
-      font-family: 'DM Serif Display', serif;
-      font-size: clamp(3rem, 8vw, 6.5rem);
-      line-height: 1.0;
-      letter-spacing: -0.03em;
-      color: var(--white);
-      animation: fadeUp 0.8s 0.1s ease both;
-    }
+    /* SKILLS */
+    .skills-matrix { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; }
+    .skill-block { background:var(--surface); padding:1.75rem; transition:background 0.2s; }
+    .skill-block:hover { background:var(--surface2); }
+    .skill-block-title { font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--green); margin-bottom:1.25rem; display:flex; align-items:center; gap:0.75rem; }
+    .skill-block-title::after { content:''; flex:1; height:1px; background:var(--border2); }
+    .skill-list { display:flex; flex-wrap:wrap; gap:0.5rem; }
+    .skill-item { font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--text-dim); background:var(--bg); border:1px solid var(--border); padding:0.3rem 0.75rem; border-radius:2px; transition:all 0.15s; }
+    .skill-item:hover { color:var(--green); border-color:var(--border2); }
 
-    h1 em {
-      font-style: italic;
-      color: var(--amber);
-    }
+    /* CERTIFICATIONS */
+    .certs-list { display:flex; flex-direction:column; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; }
+    a.cert-row { display:grid; grid-template-columns:36px 1fr auto; gap:1.5rem; align-items:center; background:var(--surface); padding:1.1rem 1.75rem; transition:all 0.2s; text-decoration:none; color:inherit; border-bottom:1px solid var(--border); }
+    a.cert-row:last-child { border-bottom:none; }
+    a.cert-row:hover { background:var(--surface2); }
+    .cert-idx { font-family:'IBM Plex Mono',monospace; font-size:0.6rem; color:var(--green); opacity:0.4; }
+    .cert-name { font-size:0.87rem; font-weight:500; color:var(--text); margin-bottom:0.15rem; }
+    .cert-issuer { font-family:'IBM Plex Mono',monospace; font-size:0.63rem; color:var(--text-muted); letter-spacing:0.04em; }
+    .cert-badge { font-family:'IBM Plex Mono',monospace; font-size:0.58rem; padding:0.2rem 0.65rem; background:var(--green-dim); border:1px solid var(--border2); color:var(--green); border-radius:2px; white-space:nowrap; }
 
-    .hero-sub {
-      margin-top: 1.75rem;
-      font-size: 1.05rem;
-      color: var(--text-dim);
-      line-height: 1.7;
-      max-width: 580px;
-      font-weight: 400;
-      animation: fadeUp 0.8s 0.2s ease both;
-    }
+    /* CONTACT */
+    .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:start; }
+    .contact-left p { font-size:0.9rem; color:var(--text-dim); line-height:1.9; font-weight:300; margin-bottom:2rem; }
+    .contact-links { display:flex; flex-direction:column; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden; }
+    a.c-link { display:flex; align-items:center; gap:1.25rem; padding:1rem 1.5rem; background:var(--surface); text-decoration:none; color:var(--text-dim); font-size:0.85rem; transition:all 0.2s; border-bottom:1px solid var(--border); }
+    a.c-link:last-child { border-bottom:none; }
+    a.c-link:hover { background:var(--surface2); color:var(--green); }
+    .c-icon { font-family:'IBM Plex Mono',monospace; font-size:0.65rem; color:var(--green); opacity:0.6; min-width:22px; }
+    .contact-form { background:var(--surface); border:1px solid var(--border2); border-radius:4px; padding:2rem; }
+    .form-hdr { font-family:'IBM Plex Mono',monospace; font-size:0.62rem; color:var(--green); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:1.75rem; }
+    .form-hdr::before { content:'$ '; opacity:0.5; }
+    .fg { margin-bottom:1.2rem; }
+    .fg label { display:block; font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.4rem; }
+    .fg input, .fg textarea { width:100%; background:var(--bg); border:1px solid var(--border); padding:0.75rem 1rem; color:var(--text); font-family:'IBM Plex Mono',monospace; font-size:0.78rem; border-radius:2px; outline:none; transition:border-color 0.2s; resize:none; }
+    .fg input:focus, .fg textarea:focus { border-color:var(--green); box-shadow:0 0 0 2px rgba(0,200,120,0.1); }
+    .f-submit { width:100%; background:var(--green); color:#04080f; border:none; padding:0.85rem; font-family:'IBM Plex Mono',monospace; font-size:0.73rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; border-radius:2px; transition:all 0.2s; }
+    .f-submit:hover { background:#00ff9d; box-shadow:0 0 20px rgba(0,200,120,0.3); }
 
-    .hero-ctas {
-      margin-top: 2.5rem;
-      display: flex; gap: 1rem; flex-wrap: wrap;
-      animation: fadeUp 0.8s 0.3s ease both;
-    }
+    /* FOOTER */
+    footer { padding:1.5rem 3rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--surface); }
+    .f-left { font-family:'IBM Plex Mono',monospace; font-size:0.63rem; color:var(--text-muted); }
+    .f-right { font-family:'IBM Plex Mono',monospace; font-size:0.63rem; color:var(--green); }
 
-    .btn-primary {
-      background: var(--amber);
-      color: #0a0c10;
-      padding: 0.8rem 2rem;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.05em;
-      text-decoration: none;
-      border-radius: 2px;
-      transition: all 0.2s;
-      display: inline-block;
-    }
-    .btn-primary:hover { background: #ffd166; transform: translateY(-2px); box-shadow: 0 8px 32px rgba(245,166,35,0.35); }
+    /* REVEAL */
+    .reveal { opacity:0; transform:translateY(24px); transition:opacity 0.65s ease,transform 0.65s ease; }
+    .reveal.visible { opacity:1; transform:none; }
 
-    .btn-outline {
-      border: 1px solid var(--border);
-      color: var(--text-dim);
-      padding: 0.8rem 2rem;
-      font-family: 'Syne', sans-serif;
-      font-weight: 600;
-      font-size: 0.85rem;
-      letter-spacing: 0.05em;
-      text-decoration: none;
-      border-radius: 2px;
-      transition: all 0.2s;
-      display: inline-block;
-    }
-    .btn-outline:hover { border-color: var(--amber); color: var(--amber); transform: translateY(-2px); }
-
-    .hero-stats {
-      margin-top: 4rem;
-      display: flex; gap: 3rem;
-      animation: fadeUp 0.8s 0.4s ease both;
-    }
-
-    .stat-num {
-      font-family: 'DM Serif Display', serif;
-      font-size: 2rem;
-      color: var(--white);
-      line-height: 1;
-    }
-    .stat-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-    }
-
-    /* ── SECTIONS ── */
-    section { padding: 6rem 4rem; position: relative; }
-
-    .section-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 1rem;
-      display: flex; align-items: center; gap: 1rem;
-    }
-    .section-label::after {
-      content: '';
-      flex: 1; max-width: 60px;
-      height: 1px;
-      background: var(--amber);
-      opacity: 0.4;
-    }
-
-    .section-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: clamp(2rem, 4vw, 3rem);
-      letter-spacing: -0.02em;
-      color: var(--white);
-      margin-bottom: 3rem;
-      line-height: 1.15;
-    }
-
-    /* ── ABOUT ── */
-    #about { background: var(--surface); }
-
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5rem;
-      align-items: start;
-    }
-
-    .about-text p {
-      color: var(--text-dim);
-      line-height: 1.85;
-      font-size: 1rem;
-      font-weight: 400;
-      margin-bottom: 1.25rem;
-    }
-
-    .about-text p strong { color: var(--amber); font-weight: 600; }
-
-    .about-meta { display: flex; flex-direction: column; gap: 1.5rem; }
-
-    .meta-card {
-      border: 1px solid var(--border);
-      background: var(--surface2);
-      padding: 1.5rem;
-      border-radius: 4px;
-      transition: border-color 0.2s;
-    }
-    .meta-card:hover { border-color: rgba(245,166,35,0.3); }
-
-    .meta-card-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-    }
-    .meta-card-value {
-      font-size: 0.95rem;
-      color: var(--text);
-      font-weight: 600;
-    }
-    .meta-card-sub {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-    }
-
-    /* ── EXPERIENCE ── */
-    #experience { background: var(--bg); }
-
-    .timeline { display: flex; flex-direction: column; gap: 0; }
-
-    .timeline-item {
-      display: grid;
-      grid-template-columns: 200px 1fr;
-      gap: 2rem;
-      padding: 2.5rem 0;
-      border-bottom: 1px solid var(--border);
-      transition: all 0.2s;
-      position: relative;
-    }
-    .timeline-item:last-child { border-bottom: none; }
-    .timeline-item::before {
-      content: '';
-      position: absolute;
-      left: 188px; top: 0; bottom: 0;
-      width: 1px;
-      background: var(--border);
-    }
-
-    .timeline-date {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
-      padding-top: 0.25rem;
-      line-height: 1.6;
-    }
-    .timeline-date span { display: block; color: var(--amber); margin-bottom: 0.25rem; font-weight: 500; }
-
-    .timeline-body { padding-left: 2rem; }
-
-    .timeline-role {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 0.25rem;
-    }
-    .timeline-company {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--amber);
-      margin-bottom: 1rem;
-      letter-spacing: 0.05em;
-    }
-    .timeline-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
-    .timeline-bullets li {
-      font-size: 0.9rem;
-      color: var(--text-dim);
-      line-height: 1.65;
-      padding-left: 1.25rem;
-      position: relative;
-      font-weight: 400;
-    }
-    .timeline-bullets li::before {
-      content: '→';
-      position: absolute; left: 0;
-      color: var(--amber);
-      opacity: 0.6;
-      font-size: 0.8rem;
-    }
-
-    /* ── PROJECTS ── */
-    #projects { background: var(--surface); }
-
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .project-card {
-      border: 1px solid var(--border);
-      background: var(--bg);
-      padding: 2rem;
-      border-radius: 4px;
-      transition: all 0.25s;
-      position: relative;
-      overflow: hidden;
-    }
-    .project-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--amber), transparent);
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
-    .project-card:hover {
-      border-color: rgba(245,166,35,0.25);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    }
-    .project-card:hover::before { opacity: 1; }
-
-    .project-num {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--amber);
-      opacity: 0.6;
-      letter-spacing: 0.1em;
-      margin-bottom: 1rem;
-    }
-    .project-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 0.75rem;
-      line-height: 1.3;
-    }
-    .project-desc {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      line-height: 1.7;
-      font-weight: 400;
-    }
-    .project-tags {
-      margin-top: 1.5rem;
-      display: flex; flex-wrap: wrap; gap: 0.5rem;
-    }
-    .tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.05em;
-      background: var(--amber-dim);
-      color: var(--amber);
-      border: 1px solid rgba(245,166,35,0.15);
-      padding: 0.25rem 0.65rem;
-      border-radius: 2px;
-    }
-
-    /* ── SKILLS ── */
-    #skills { background: var(--bg); }
-
-    .skills-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .skill-group {
-      border: 1px solid var(--border);
-      background: var(--surface);
-      padding: 1.75rem;
-      border-radius: 4px;
-      transition: border-color 0.2s;
-    }
-    .skill-group:hover { border-color: rgba(245,166,35,0.2); }
-
-    .skill-group-title {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--amber);
-      margin-bottom: 1.25rem;
-      display: flex; align-items: center; gap: 0.75rem;
-    }
-    .skill-group-title::before {
-      content: '';
-      width: 20px; height: 1px;
-      background: var(--amber); opacity: 0.5;
-    }
-
-    .skill-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .skill-pill {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-dim);
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      padding: 0.35rem 0.85rem;
-      border-radius: 2px;
-      transition: all 0.15s;
-    }
-    .skill-pill:hover { color: var(--amber); border-color: rgba(245,166,35,0.3); }
-
-    /* ── CERTIFICATIONS ── */
-    #certifications { background: var(--surface); }
-
-    .certs-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1rem;
-    }
-
-    .cert-card {
-      border: 1px solid var(--border);
-      background: var(--bg);
-      padding: 1.5rem;
-      border-radius: 4px;
-      display: flex; align-items: flex-start; gap: 1rem;
-      transition: all 0.2s;
-    }
-    .cert-card:hover { border-color: rgba(245,166,35,0.25); transform: translateY(-2px); }
-
-    .cert-icon {
-      width: 36px; height: 36px; min-width: 36px;
-      background: var(--amber-dim);
-      border: 1px solid rgba(245,166,35,0.2);
-      border-radius: 2px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.9rem;
-    }
-    .cert-title {
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.4;
-      margin-bottom: 0.25rem;
-    }
-    .cert-issuer {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
-    }
-
-    /* ── CONTACT ── */
-    #contact { background: var(--bg); }
-
-    .contact-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5rem;
-      align-items: start;
-    }
-
-    .contact-text p {
-      color: var(--text-dim);
-      line-height: 1.8;
-      font-size: 1rem;
-      font-weight: 400;
-      margin-bottom: 2rem;
-    }
-
-    .contact-links { display: flex; flex-direction: column; gap: 1rem; }
-    .contact-link {
-      display: flex; align-items: center; gap: 1rem;
-      text-decoration: none;
-      color: var(--text-dim);
-      font-size: 0.9rem;
-      font-weight: 600;
-      padding: 1rem 1.25rem;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      transition: all 0.2s;
-      background: var(--surface);
-    }
-    .contact-link:hover { border-color: var(--amber); color: var(--amber); transform: translateX(4px); }
-    .contact-link .cl-icon {
-      font-size: 1.1rem;
-      width: 28px; text-align: center;
-    }
-    .contact-link .cl-label { font-family: 'DM Mono', monospace; font-size: 0.75rem; }
-
-    .contact-form-area {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 2.5rem;
-    }
-
-    .form-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.4rem;
-      color: var(--white);
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group { margin-bottom: 1.25rem; }
-    .form-group label {
-      display: block;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-    }
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 0.85rem 1rem;
-      color: var(--text);
-      font-family: 'Syne', sans-serif;
-      font-size: 0.9rem;
-      transition: border-color 0.2s;
-      outline: none;
-      resize: none;
-    }
-    .form-group input:focus,
-    .form-group textarea:focus { border-color: var(--amber); }
-
-    .form-submit {
-      width: 100%;
-      background: var(--amber);
-      color: #0a0c10;
-      padding: 0.9rem;
-      border: none;
-      border-radius: 2px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.9rem;
-      letter-spacing: 0.05em;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .form-submit:hover { background: #ffd166; transform: translateY(-1px); }
-
-    /* ── FOOTER ── */
-    footer {
-      padding: 2rem 4rem;
-      border-top: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--bg);
-    }
-    .footer-copy {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
-    }
-    .footer-right {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--amber);
-      letter-spacing: 0.05em;
-    }
-
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: none;
-    }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 900px) {
-      nav { padding: 1rem 1.5rem; }
-      .nav-links { gap: 1.5rem; }
-      section { padding: 4rem 1.5rem; }
-      #hero { padding: 8rem 1.5rem 4rem; }
-      .about-grid, .contact-inner { grid-template-columns: 1fr; gap: 2.5rem; }
-      .timeline-item { grid-template-columns: 1fr; gap: 0.5rem; }
-      .timeline-item::before { display: none; }
-      .timeline-body { padding-left: 0; }
-      h1 { font-size: 2.8rem; }
-      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
-      .hero-stats { gap: 2rem; }
+    /* RESPONSIVE */
+    @media(max-width:960px) {
+      nav { padding:0.75rem 1.5rem; }
+      .nav-links { gap:1.2rem; }
+      .nav-links a { font-size:0.6rem; }
+      section { padding:3.5rem 1.5rem; }
+      #hero { grid-template-columns:1fr; padding:110px 1.5rem 3rem; }
+      .terminal { display:none; }
+      .about-grid, .contact-grid { grid-template-columns:1fr; gap:2.5rem; }
+      .exp-item { grid-template-columns:1fr; }
+      .exp-left { border-right:none; border-bottom:1px solid var(--border); padding:0 0 1rem; margin-bottom:1rem; }
+      .exp-right { padding-left:0; }
+      footer { flex-direction:column; gap:0.5rem; text-align:center; padding:1.25rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav>
-    <div class="nav-logo">KC.</div>
-    <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#experience">Experience</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#skills">Skills</a></li>
-      <li><a href="#certifications">Certs</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
-  <!-- HERO -->
-  <section id="hero">
-    <div class="hero-grid-bg"></div>
-    <div class="hero-glow"></div>
-    <div class="hero-content">
-      <div class="hero-tag">Available for Opportunities</div>
-      <h1>Kanav<br><em>Chatley</em></h1>
-      <p class="hero-sub">
-        AI/ML Engineer & Quantitative Researcher building intelligent systems —
-        from RAG pipelines and deep learning models to limit order book simulators
-        and market microstructure analysis.
-      </p>
-      <div class="hero-ctas">
-        <a href="#contact" class="btn-primary">Get in Touch</a>
-        <a href="#projects" class="btn-outline">View Projects</a>
-        <a href="mailto:chatleykanav@gmail.com" class="btn-outline">chatleykanav@gmail.com</a>
+<!-- TICKER -->
+<div class="ticker-wrap"><div class="ticker-track" id="ticker"></div></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">KC_QUANT</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#certifications">Certifications</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-left">
+    <div class="hero-status"><div class="status-dot"></div>Open to Quant &amp; ML Roles</div>
+    <h1>Kanav Chatley<span class="role">Quantitative Researcher</span></h1>
+    <p class="hero-tagline">
+      Building at the intersection of <span>mathematical finance</span>,<br>
+      <span>systems engineering</span>, and <span>machine learning</span>.<br>
+      Order books · alpha signals · market microstructure.
+    </p>
+    <div class="hero-ctas">
+      <a href="#contact" class="btn-primary">→ Get in Touch</a>
+      <a href="#projects" class="btn-outline">View Work</a>
+      <a href="mailto:chatleykanav@gmail.com" class="btn-outline">Email</a>
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+      <div class="term-title">kanav@quant ~ research</div>
+    </div>
+    <div class="term-body">
+      <span class="tl"><span class="tp">❯ </span><span class="tc">./profile.sh --summary</span></span>
+      <span class="to"><span class="tk">name</span>       : <span class="tv">Kanav Chatley</span></span>
+      <span class="to"><span class="tk">role</span>       : <span class="tv">Quant Researcher</span></span>
+      <span class="to"><span class="tk">cgpa</span>       : <span class="tpos">8.33 / 10.0</span></span>
+      <span class="to"><span class="tk">focus</span>      : <span class="tv">LOB · Microstructure · ML</span></span>
+      <span class="tl">&nbsp;</span>
+      <span class="tl"><span class="tp">❯ </span><span class="tc">./lob_sim --stats</span></span>
+      <span class="to"><span class="tk">engine</span>     : <span class="tv">C++ price-time priority</span></span>
+      <span class="to"><span class="tk">order_types</span>: <span class="tv">market · limit · partial</span></span>
+      <span class="to"><span class="tk">latency</span>    : <span class="tpos">sub-microsecond</span></span>
+      <span class="to"><span class="tk">features</span>   : <span class="tv">spread · depth · imbalance</span></span>
+      <span class="tl">&nbsp;</span>
+      <span class="tl"><span class="tp">❯ </span><span class="tc">python risk_model.py --eval</span></span>
+      <span class="to"><span class="tk">model</span>      : <span class="tv">XGBoost + k-fold CV</span></span>
+      <span class="to"><span class="tk">precision</span>  : <span class="tpos">0.94</span></span>
+      <span class="to"><span class="tk">recall</span>     : <span class="tpos">0.91</span></span>
+      <span class="to"><span class="tk">status</span>     : <span class="tpos">✓ PASS</span></span>
+      <span class="tl">&nbsp;</span>
+      <span class="tl"><span class="tp">❯ </span><span class="t-cursor"></span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="sec-header reveal"><span class="sec-num">01</span><h2 class="sec-title">About <em>Me</em></h2><div class="sec-line"></div></div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>I'm a <strong>Computer Science undergraduate</strong> specializing in AI &amp; ML at VIT Chennai, with a research focus on <strong>quantitative finance</strong> and <strong>market microstructure</strong>. My work sits at the boundary of rigorous mathematical modeling and high-performance systems engineering.</p>
+      <p>At <strong>uTrade Solutions</strong>, I built a C++ limit order book simulator from scratch — modeling price-time priority queues, partial fills, bid-ask spread evolution, and execution latency. I engineered microstructure features from raw tick data to power predictive models.</p>
+      <p>My academic and project work spans <strong>credit risk modeling</strong> with ensemble methods, <strong>algorithmic trading strategies</strong>, and <strong>financial time series analysis</strong>. I approach every problem with a quant's mindset: hypothesis → data → model → validation.</p>
+      <div class="tag-cloud">
+        <span class="tag-pill">Market Microstructure</span>
+        <span class="tag-pill">Order Book Dynamics</span>
+        <span class="tag-pill">Statistical Modeling</span>
+        <span class="tag-pill">C++ Systems</span>
+        <span class="tag-pill">Python Quant</span>
+        <span class="tag-pill">ML for Finance</span>
       </div>
-      <div class="hero-stats">
-        <div>
-          <div class="stat-num">3+</div>
-          <div class="stat-label">Internships</div>
-        </div>
-        <div>
-          <div class="stat-num">8.33</div>
-          <div class="stat-label">CGPA</div>
-        </div>
-        <div>
-          <div class="stat-num">6+</div>
-          <div class="stat-label">Certifications</div>
+    </div>
+    <div class="reveal">
+      <div class="stat-grid">
+        <div class="stat-cell"><div class="stat-num">8.33</div><div class="stat-lbl">CGPA</div></div>
+        <div class="stat-cell"><div class="stat-num">4+</div><div class="stat-lbl">Internships</div></div>
+        <div class="stat-cell"><div class="stat-num">2+</div><div class="stat-lbl">Quant Projects</div></div>
+        <div class="stat-cell"><div class="stat-num">10+</div><div class="stat-lbl">Certifications</div></div>
+      </div>
+      <div class="terminal" style="font-size:0.7rem;">
+        <div class="term-bar"><div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div><div class="term-title">education.json</div></div>
+        <div class="term-body" style="line-height:1.95">
+          <span class="tl"><span class="tk">"institution"</span>: <span class="tv">"VIT Chennai"</span>,</span>
+          <span class="tl"><span class="tk">"degree"</span>: <span class="tv">"B.Tech CSE (AI &amp; ML)"</span>,</span>
+          <span class="tl"><span class="tk">"cgpa"</span>: <span class="tpos">8.33</span>,</span>
+          <span class="tl"><span class="tk">"period"</span>: <span class="tv">"2022 – Present"</span>,</span>
+          <span class="tl"><span class="tk">"coursework"</span>: [</span>
+          <span class="to"><span class="tv">"Probability &amp; Statistics"</span>,</span>
+          <span class="to"><span class="tv">"Linear Algebra"</span>,</span>
+          <span class="to"><span class="tv">"Optimization"</span>,</span>
+          <span class="to"><span class="tv">"Machine Learning"</span></span>
+          <span class="tl">]</span>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ABOUT -->
-  <section id="about">
-    <div class="section-label">01 — About</div>
-    <div class="about-grid reveal">
-      <div class="about-text">
-        <h2 class="section-title">Building at the intersection of<br><em>AI and Systems</em></h2>
-        <p>
-          I'm a <strong>Computer Science undergraduate</strong> specializing in AI & ML at Vellore Institute of Technology, Chennai.
-          My work spans the full spectrum from deep learning and generative AI to quantitative systems and backend engineering.
-        </p>
-        <p>
-          At <strong>uTrade Solutions</strong>, I built a C++ limit order book simulator from scratch — modeling price-time priority,
-          partial fills, and execution latency. At <strong>NeoSOFT</strong>, I designed a production-grade RAG pipeline
-          processing 10,000+ documents with Hugging Face models and vector search.
-        </p>
-        <p>
-          I'm drawn to problems that sit at the boundary of rigorous mathematics and scalable engineering —
-          whether that's training a GAN for text-to-video generation or engineering microstructure features for
-          financial prediction models.
-        </p>
-      </div>
-      <div class="about-meta">
-        <div class="meta-card">
-          <div class="meta-card-label">Education</div>
-          <div class="meta-card-value">Vellore Institute of Technology</div>
-          <div class="meta-card-sub">B.Tech CSE (AI & ML) · CGPA 8.33 · 2022–Present</div>
-        </div>
-        <div class="meta-card">
-          <div class="meta-card-label">Location</div>
-          <div class="meta-card-value">Ludhiana, Punjab, India</div>
-          <div class="meta-card-sub">Open to remote & relocation</div>
-        </div>
-        <div class="meta-card">
-          <div class="meta-card-label">Coursework</div>
-          <div class="meta-card-value">Probability & Statistics · Linear Algebra</div>
-          <div class="meta-card-sub">Machine Learning · Optimization · Data Analysis</div>
-        </div>
-        <div class="meta-card">
-          <div class="meta-card-label">Interests</div>
-          <div class="meta-card-value">ML Research · Quant Systems · Generative AI</div>
-          <div class="meta-card-sub">Market Microstructure · Computer Vision</div>
-        </div>
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="sec-header reveal"><span class="sec-num">02</span><h2 class="sec-title">Work <em>Experience</em></h2><div class="sec-line"></div></div>
+
+  <div class="exp-item reveal">
+    <div class="exp-left">
+      <div class="exp-current">Current</div>
+      <div class="exp-period">Feb 2026 – Present</div>
+    </div>
+    <div class="exp-right">
+      <div class="exp-role">Software Engineer Trainee</div>
+      <div class="exp-company">// Newgen Software Technologies Limited</div>
+      <ul class="exp-bullets">
+        <li>Developed backend modules for high-volume structured enterprise data processing with focus on scalability and reliability.</li>
+        <li>Built data validation and transformation pipelines to support downstream analytics and ML workflows.</li>
+        <li>Optimized execution performance through modular architecture and service-level improvements.</li>
+      </ul>
+      <div class="exp-tags"><span class="exp-tag">Backend</span><span class="exp-tag">Data Pipelines</span><span class="exp-tag">Enterprise Systems</span><span class="exp-tag">Java</span></div>
+    </div>
+  </div>
+
+  <div class="exp-item reveal">
+    <div class="exp-left"><div class="exp-period">May 2025 – Jul 2025<br>Internship</div></div>
+    <div class="exp-right">
+      <div class="exp-role">Quantitative Research Intern</div>
+      <div class="exp-company">// uTrade Solutions</div>
+      <ul class="exp-bullets">
+        <li>Implemented a C++ limit order book simulator with price-time priority queue, supporting partial fills, order cancellation, and full trade execution logic.</li>
+        <li>Simulated bid-ask spread evolution and multi-level depth to analyze liquidity dynamics and market impact.</li>
+        <li>Engineered microstructure features — order imbalance, depth ratio, trade intensity — from structured tick data for predictive modeling.</li>
+        <li>Evaluated execution latency and matching efficiency using trade logs and statistical performance metrics.</li>
+      </ul>
+      <div class="exp-tags"><span class="exp-tag">C++</span><span class="exp-tag">Order Book</span><span class="exp-tag">Market Microstructure</span><span class="exp-tag">Statistical Analysis</span><span class="exp-tag">Feature Engineering</span></div>
+    </div>
+  </div>
+
+  <div class="exp-item reveal">
+    <div class="exp-left"><div class="exp-period">Jul 2024 – Aug 2024<br>Internship</div></div>
+    <div class="exp-right">
+      <div class="exp-role">Machine Learning Intern</div>
+      <div class="exp-company">// NeoSOFT</div>
+      <ul class="exp-bullets">
+        <li>Built a Retrieval-Augmented Generation pipeline using Python, Hugging Face models, and vector search over 10K+ documents.</li>
+        <li>Designed ingestion and preprocessing workflows for structured and unstructured data sources.</li>
+        <li>Improved retrieval relevance through embedding optimization and iterative validation cycles.</li>
+      </ul>
+      <div class="exp-tags"><span class="exp-tag">Python</span><span class="exp-tag">RAG</span><span class="exp-tag">Hugging Face</span><span class="exp-tag">Vector Search</span><span class="exp-tag">NLP</span></div>
+    </div>
+  </div>
+
+  <div class="exp-item reveal">
+    <div class="exp-left"><div class="exp-period">May 2024 – Jun 2024<br>Internship</div></div>
+    <div class="exp-right">
+      <div class="exp-role">Software Development Intern</div>
+      <div class="exp-company">// International Marketing Corporation Pvt Ltd · Ludhiana</div>
+      <ul class="exp-bullets">
+        <li>Developed a full-stack web application for managing and marketing ayurvedic products.</li>
+        <li>Implemented third-party service integrations for payment processing, shipping, and inventory management via REST APIs.</li>
+        <li>Built the backend with Flask ensuring seamless user experience and efficient order operations.</li>
+      </ul>
+      <div class="exp-tags"><span class="exp-tag">Flask</span><span class="exp-tag">Python</span><span class="exp-tag">REST APIs</span><span class="exp-tag">JavaScript</span><span class="exp-tag">Full Stack</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="sec-header reveal"><span class="sec-num">03</span><h2 class="sec-title">Research &amp; <em>Projects</em></h2><div class="sec-line"></div></div>
+  <div class="projects-grid">
+    <div class="proj-card reveal">
+      <div class="proj-header"><span class="proj-num">P-01</span><span class="proj-type">QUANT SYSTEMS</span></div>
+      <div class="proj-title">Limit Order Book Simulation Engine</div>
+      <div class="proj-desc">High-performance matching engine in C++ supporting market and limit orders with price-time priority. Implements partial fills, trade logging, real-time depth updates, and bid-ask spread simulation. Benchmarked Rust modules for concurrency and memory safety comparisons.</div>
+      <div class="proj-stack"><span>C++</span><span>Rust</span><span>STL</span><span>Multithreading</span><span>Memory Management</span></div>
+    </div>
+    <div class="proj-card reveal">
+      <div class="proj-header"><span class="proj-num">P-02</span><span class="proj-type">QUANT RESEARCH</span></div>
+      <div class="proj-title">Credit Risk Modeling</div>
+      <div class="proj-desc">End-to-end credit risk model with statistical feature selection using Chi-square tests, ANOVA, and VIF to address multicollinearity. Trained Decision Tree, Random Forest, and XGBoost ensemble models with k-fold cross-validation and full evaluation metrics.</div>
+      <div class="proj-stack"><span>Python</span><span>XGBoost</span><span>Scikit-learn</span><span>Statistics</span><span>Feature Selection</span></div>
+    </div>
+    <div class="proj-card reveal">
+      <div class="proj-header"><span class="proj-num">P-03</span><span class="proj-type">MARKET DATA</span></div>
+      <div class="proj-title">Microstructure Feature Engineering</div>
+      <div class="proj-desc">Engineered trade-level features from structured financial transaction data — order imbalance, depth ratios, spread dynamics, and trade intensity signals. Analyzed market microstructure patterns using statistical modeling and visualization.</div>
+      <div class="proj-stack"><span>Python</span><span>Pandas</span><span>NumPy</span><span>Matplotlib</span><span>Seaborn</span></div>
+    </div>
+    <div class="proj-card reveal">
+      <div class="proj-header"><span class="proj-num">P-04</span><span class="proj-type">DEEP LEARNING</span></div>
+      <div class="proj-title">Pneumonia Detection CNN</div>
+      <div class="proj-desc">Trained a CNN on chest X-ray images achieving 98% test accuracy. Applied hyperparameter tuning, regularization, and validation strategies. Deployed as a Flask REST API for real-time inference — demonstrating end-to-end ML system development.</div>
+      <div class="proj-stack"><span>TensorFlow</span><span>Keras</span><span>CNN</span><span>Flask</span><span>REST API</span></div>
+    </div>
+    <div class="proj-card reveal">
+      <div class="proj-header"><span class="proj-num">P-05</span><span class="proj-type">GENERATIVE AI</span></div>
+      <div class="proj-title">Text-to-Video GAN</div>
+      <div class="proj-desc">Designed and trained a GAN in PyTorch to generate video frame sequences from text embeddings. Implemented text encoding, temporal frame generation, and video assembly pipelines with loss balancing for training stability.</div>
+      <div class="proj-stack"><span>PyTorch</span><span>GAN</span><span>Text Embeddings</span><span>Computer Vision</span></div>
+    </div>
+    <div class="proj-card reveal">
+      <div class="proj-header"><span class="proj-num">P-06</span><span class="proj-type">ML SYSTEMS</span></div>
+      <div class="proj-title">RAG Q&amp;A Automation System</div>
+      <div class="proj-desc">Production-grade Retrieval-Augmented Generation system over 10K+ documents with vector search integration, embedding optimization, and iterative validation loops for high-relevance document retrieval.</div>
+      <div class="proj-stack"><span>Python</span><span>Hugging Face</span><span>RAG</span><span>Vector DB</span><span>LLMs</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="sec-header reveal"><span class="sec-num">04</span><h2 class="sec-title">Technical <em>Stack</em></h2><div class="sec-line"></div></div>
+  <div class="skills-matrix">
+    <div class="skill-block reveal"><div class="skill-block-title">Quant &amp; Finance</div><div class="skill-list"><span class="skill-item">Market Microstructure</span><span class="skill-item">Order Book Dynamics</span><span class="skill-item">Credit Risk Modeling</span><span class="skill-item">Algo Trading</span><span class="skill-item">Statistical Arbitrage</span></div></div>
+    <div class="skill-block reveal"><div class="skill-block-title">Programming</div><div class="skill-list"><span class="skill-item">C++</span><span class="skill-item">Rust</span><span class="skill-item">Python</span><span class="skill-item">SQL</span><span class="skill-item">Java</span></div></div>
+    <div class="skill-block reveal"><div class="skill-block-title">Mathematics</div><div class="skill-list"><span class="skill-item">Probability &amp; Statistics</span><span class="skill-item">Linear Algebra</span><span class="skill-item">Optimization</span><span class="skill-item">Time Series</span><span class="skill-item">Stochastic Processes</span></div></div>
+    <div class="skill-block reveal"><div class="skill-block-title">ML / Modeling</div><div class="skill-list"><span class="skill-item">XGBoost</span><span class="skill-item">Random Forest</span><span class="skill-item">PyTorch</span><span class="skill-item">Scikit-learn</span><span class="skill-item">Cross-Validation</span></div></div>
+    <div class="skill-block reveal"><div class="skill-block-title">Data &amp; Analysis</div><div class="skill-list"><span class="skill-item">Pandas</span><span class="skill-item">NumPy</span><span class="skill-item">Matplotlib</span><span class="skill-item">Seaborn</span><span class="skill-item">EDA</span></div></div>
+    <div class="skill-block reveal"><div class="skill-block-title">Systems &amp; DevOps</div><div class="skill-list"><span class="skill-item">STL</span><span class="skill-item">Multithreading</span><span class="skill-item">Memory Management</span><span class="skill-item">Linux</span><span class="skill-item">Docker</span></div></div>
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section id="certifications">
+  <div class="sec-header reveal"><span class="sec-num">05</span><h2 class="sec-title">Credentials &amp; <em>Certifications</em></h2><div class="sec-line"></div></div>
+  <div class="certs-list reveal">
+    <a class="cert-row" href="https://www.theforage.com/completion-certificates/Sj7temL583QAYpHXD/bWqaecPDbYAwSDqJy_Sj7temL583QAYpHXD_698dfd57f850f42f7e75b292_1771320933079_completion_certificate.pdf" target="_blank" rel="noopener">
+      <div class="cert-idx">01</div><div><div class="cert-name">J.P. Morgan — Quantitative Research Job Simulation</div><div class="cert-issuer">Forage / J.P. Morgan</div></div><div class="cert-badge">Quant ↗</div>
+    </a>
+    <a class="cert-row" href="https://www.open.edu/openlearn/money-business/quantitative-and-qualitative-research-finance/content-section-0?active-tab=description-tab" target="_blank" rel="noopener">
+      <div class="cert-idx">02</div><div><div class="cert-name">Quantitative and Qualitative Research in Finance</div><div class="cert-issuer">The Open University</div></div><div class="cert-badge">Finance ↗</div>
+    </a>
+    <a class="cert-row" href="https://www.udemy.com/certificate/UC-af60c472-87c4-4ffa-8723-8681fbed976b/" target="_blank" rel="noopener">
+      <div class="cert-idx">03</div><div><div class="cert-name">Algorithmic Trading &amp; Quantitative Analysis Using Python</div><div class="cert-issuer">Udemy</div></div><div class="cert-badge">Algo Trading ↗</div>
+    </a>
+    <a class="cert-row" href="https://courses.cognitiveclass.ai/certificates/a737494553a442c4895f74fd1a1ca0d0" target="_blank" rel="noopener">
+      <div class="cert-idx">04</div><div><div class="cert-name">Machine Learning with Python</div><div class="cert-issuer">IBM</div></div><div class="cert-badge">ML ↗</div>
+    </a>
+    <a class="cert-row" href="https://udemy-certificate.s3.amazonaws.com/pdf/UC-a52bb14b-c991-4768-8038-96ab7ff7a57d.pdf" target="_blank" rel="noopener">
+      <div class="cert-idx">05</div><div><div class="cert-name">AI Engineer Core Track: LLM Engineering, RAG, QLoRA, Agents</div><div class="cert-issuer">Udemy</div></div><div class="cert-badge">AI / LLM ↗</div>
+    </a>
+    <a class="cert-row" href="https://www.linkedin.com/learning/certificates/91c1315bdea2bdef9091c69d03fad6a571aa0f46723c52adbec3a1f9f7adc469" target="_blank" rel="noopener">
+      <div class="cert-idx">06</div><div><div class="cert-name">Docker Foundations Professional Certificate</div><div class="cert-issuer">Docker, Inc</div></div><div class="cert-badge">DevOps ↗</div>
+    </a>
+    <a class="cert-row" href="https://www.theforage.com/completion-certificates/SKZxezskWgmFjRvj9/gabev3vXhuACr48eb_SKZxezskWgmFjRvj9_698dfd57f850f42f7e75b292_1772515275954_completion_certificate.pdf" target="_blank" rel="noopener">
+      <div class="cert-idx">07</div><div><div class="cert-name">BCG — GenAI Job Simulation</div><div class="cert-issuer">Forage / BCG</div></div><div class="cert-badge">GenAI ↗</div>
+    </a>
+    <a class="cert-row" href="https://www.credly.com/badges/4d0b1fda-c4ee-41c8-a58c-cd2db0b878f1/linked_in_profile" target="_blank" rel="noopener">
+      <div class="cert-idx">08</div><div><div class="cert-name">Data Science Essentials With Python</div><div class="cert-issuer">Cisco</div></div><div class="cert-badge">Data ↗</div>
+    </a>
+    <a class="cert-row" href="https://badges.plus.columbia.edu/d621d759-3cc5-42f8-9d36-6f1f42fd9242#acc.iRXc0uSQ" target="_blank" rel="noopener">
+      <div class="cert-idx">09</div><div><div class="cert-name">Prompt Engineering &amp; Programming with OpenAI</div><div class="cert-issuer">Columbia+</div></div><div class="cert-badge">AI ↗</div>
+    </a>
+    <a class="cert-row" href="https://www.udemy.com/certificate/UC-461fba95-dea4-49c3-b99f-53a82dce5082/" target="_blank" rel="noopener">
+      <div class="cert-idx">10</div><div><div class="cert-name">SQL for Beginners: Learn SQL using MySQL and Database Design</div><div class="cert-issuer">Udemy</div></div><div class="cert-badge">SQL ↗</div>
+    </a>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="sec-header reveal"><span class="sec-num">06</span><h2 class="sec-title">Get in <em>Touch</em></h2><div class="sec-line"></div></div>
+  <div class="contact-grid reveal">
+    <div class="contact-left">
+      <p>I'm actively looking for <strong style="color:var(--green)">quantitative research</strong>, <strong style="color:var(--green)">quant developer</strong>, and <strong style="color:var(--green)">ML engineering</strong> roles. If you're building trading systems, pricing models, or risk infrastructure — let's talk.</p>
+      <div class="contact-links">
+        <a href="mailto:chatleykanav@gmail.com" class="c-link"><span class="c-icon">✉</span>chatleykanav@gmail.com</a>
+        <a href="https://linkedin.com/in/kanav-chatley" target="_blank" class="c-link"><span class="c-icon">in</span>linkedin.com/in/kanav-chatley</a>
+        <a href="https://github.com/Kanav-C" target="_blank" class="c-link"><span class="c-icon">gh</span>github.com/Kanav-C</a>
+        <a href="tel:+919781810999" class="c-link"><span class="c-icon">☏</span>+91 9781810999</a>
       </div>
     </div>
-  </section>
-
-  <!-- EXPERIENCE -->
-  <section id="experience">
-    <div class="section-label">02 — Experience</div>
-    <h2 class="section-title reveal">Where I've worked</h2>
-    <div class="timeline">
-
-      <div class="timeline-item reveal">
-        <div class="timeline-date">
-          <span>Current</span>
-          Feb 2026 – Present
-        </div>
-        <div class="timeline-body">
-          <div class="timeline-role">Software Engineer Trainee</div>
-          <div class="timeline-company">Newgen Software Technologies Limited</div>
-          <ul class="timeline-bullets">
-            <li>Developed backend modules for high-volume structured enterprise data processing.</li>
-            <li>Built data validation and transformation pipelines for reliable downstream analytics and ML workflows.</li>
-            <li>Improved system performance and scalability through modular architecture and execution optimization.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="timeline-item reveal">
-        <div class="timeline-date">
-          <span>Internship</span>
-          May 2025 – Jul 2025
-        </div>
-        <div class="timeline-body">
-          <div class="timeline-role">Quantitative Research Intern</div>
-          <div class="timeline-company">uTrade Solutions</div>
-          <ul class="timeline-bullets">
-            <li>Implemented a C++ limit order book simulator modeling price-time priority, partial fills, and trade execution.</li>
-            <li>Generated structured market datasets and engineered microstructure features for analysis and predictive modeling.</li>
-            <li>Analyzed execution latency and liquidity dynamics using statistical techniques and trade-level data.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="timeline-item reveal">
-        <div class="timeline-date">
-          <span>Internship</span>
-          Jul 2024 – Aug 2024
-        </div>
-        <div class="timeline-body">
-          <div class="timeline-role">Machine Learning Intern</div>
-          <div class="timeline-company">NeoSOFT</div>
-          <ul class="timeline-bullets">
-            <li>Built a Retrieval-Augmented Generation (RAG) pipeline using Python, Hugging Face models, and vector search.</li>
-            <li>Designed ingestion and preprocessing workflows for structured and unstructured data (10K+ documents).</li>
-            <li>Improved retrieval relevance through iterative validation and embedding optimization.</li>
-          </ul>
-        </div>
-      </div>
-
+    <div class="contact-form">
+      <div class="form-hdr">send_message.sh</div>
+      <form onsubmit="handleSubmit(event)">
+        <div class="fg"><label>Your Name</label><input type="text" placeholder="Jane Smith" required /></div>
+        <div class="fg"><label>Your Email</label><input type="email" placeholder="jane@firm.com" required /></div>
+        <div class="fg"><label>Message</label><textarea rows="5" placeholder="I'd like to discuss a quant role..." required></textarea></div>
+        <button type="submit" class="f-submit">./send --now</button>
+      </form>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- PROJECTS -->
-  <section id="projects">
-    <div class="section-label">03 — Projects</div>
-    <h2 class="section-title reveal">Things I've built</h2>
-    <div class="projects-grid">
+<footer>
+  <div class="f-left">© 2026 Kanav Chatley · kanav-chatley.vercel.app</div>
+  <div class="f-right">quant · systems · ml</div>
+</footer>
 
-      <div class="project-card reveal">
-        <div class="project-num">01</div>
-        <div class="project-title">Text-to-Video Generation using GANs</div>
-        <div class="project-desc">
-          Designed and trained a GAN using PyTorch to generate video frame sequences from text embeddings.
-          Implemented text encoding, frame generation, and video assembly pipelines with training stability optimizations.
-        </div>
-        <div class="project-tags">
-          <span class="tag">PyTorch</span><span class="tag">GAN</span><span class="tag">Deep Learning</span><span class="tag">Computer Vision</span>
-        </div>
-      </div>
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+  (function loop(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
 
-      <div class="project-card reveal">
-        <div class="project-num">02</div>
-        <div class="project-title">Order Book Simulation Engine</div>
-        <div class="project-desc">
-          High-performance C++ matching engine supporting market and limit orders with price-time priority.
-          Implemented partial fills, trade logging, and real-time depth updates. Benchmarked Rust modules for concurrency.
-        </div>
-        <div class="project-tags">
-          <span class="tag">C++</span><span class="tag">Rust</span><span class="tag">Market Microstructure</span><span class="tag">STL</span>
-        </div>
-      </div>
+  // Ticker
+  const items=[
+    {sym:'NIFTY50',val:'22,847',chg:'+0.43%',up:true},{sym:'SENSEX',val:'75,410',chg:'+0.38%',up:true},
+    {sym:'USDINR',val:'83.91',chg:'-0.12%',up:false},{sym:'BANKNIFTY',val:'48,230',chg:'+0.61%',up:true},
+    {sym:'SPY',val:'592.14',chg:'+0.82%',up:true},{sym:'QQQ',val:'498.37',chg:'+1.24%',up:true},
+    {sym:'BTC',val:'84,200',chg:'-0.43%',up:false},{sym:'VIX',val:'18.32',chg:'-1.15%',up:false},
+    {sym:'GOLD',val:'71,450',chg:'+0.22%',up:true},{sym:'NQ1!',val:'21,440',chg:'+1.10%',up:true},
+  ];
+  const track=document.getElementById('ticker');
+  track.innerHTML=[...items,...items].map(t=>`<span class="ticker-item"><span class="sym">${t.sym}</span>${t.val}<span class="${t.up?'up':'dn'}">${t.chg}</span></span>`).join('');
 
-      <div class="project-card reveal">
-        <div class="project-num">03</div>
-        <div class="project-title">Pneumonia Detection using CNN</div>
-        <div class="project-desc">
-          Trained a CNN on chest X-ray images achieving 98% test accuracy. Applied regularization and hyperparameter tuning.
-          Deployed as a Flask REST API for real-time inference.
-        </div>
-        <div class="project-tags">
-          <span class="tag">TensorFlow</span><span class="tag">Keras</span><span class="tag">CNN</span><span class="tag">Flask</span>
-        </div>
-      </div>
+  // Scroll reveal
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);obs.unobserve(e.target);}});
+  },{threshold:0.08});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-      <div class="project-card reveal">
-        <div class="project-num">04</div>
-        <div class="project-title">Sign Language Recognition</div>
-        <div class="project-desc">
-          ASL recognition pipeline using MediaPipe for hand landmark extraction and RandomForest classification.
-          Engineered spatial features from 21-point landmarks across 26 gesture classes.
-        </div>
-        <div class="project-tags">
-          <span class="tag">MediaPipe</span><span class="tag">Scikit-learn</span><span class="tag">Feature Engineering</span>
-        </div>
-      </div>
+  // Active nav
+  const secs=document.querySelectorAll('section[id]');
+  const links=document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll',()=>{
+    let cur='';
+    secs.forEach(s=>{if(window.scrollY>=s.offsetTop-120)cur=s.id;});
+    links.forEach(a=>{a.style.color=a.getAttribute('href')==='#'+cur?'var(--green)':'';});
+  });
 
-      <div class="project-card reveal">
-        <div class="project-num">05</div>
-        <div class="project-title">Credit Risk Modeling</div>
-        <div class="project-desc">
-          Statistical feature selection using Chi-square, ANOVA, and VIF. Trained ensemble models with k-fold cross-validation
-          and evaluated using precision, recall, and F1-score for credit risk assessment.
-        </div>
-        <div class="project-tags">
-          <span class="tag">XGBoost</span><span class="tag">Random Forest</span><span class="tag">Statistics</span><span class="tag">Python</span>
-        </div>
-      </div>
-
-      <div class="project-card reveal">
-        <div class="project-num">06</div>
-        <div class="project-title">RAG Q&A Automation System</div>
-        <div class="project-desc">
-          Production-grade Retrieval-Augmented Generation system processing 10K+ documents with vector search integration,
-          embedding optimization, and iterative validation for high-relevance retrieval.
-        </div>
-        <div class="project-tags">
-          <span class="tag">Hugging Face</span><span class="tag">RAG</span><span class="tag">Vector Search</span><span class="tag">LLM</span>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- SKILLS -->
-  <section id="skills">
-    <div class="section-label">04 — Skills</div>
-    <h2 class="section-title reveal">Technical Stack</h2>
-    <div class="skills-grid">
-
-      <div class="skill-group reveal">
-        <div class="skill-group-title">Programming</div>
-        <div class="skill-pills">
-          <span class="skill-pill">Python</span>
-          <span class="skill-pill">C++</span>
-          <span class="skill-pill">Rust</span>
-          <span class="skill-pill">SQL</span>
-          <span class="skill-pill">Java</span>
-        </div>
-      </div>
-
-      <div class="skill-group reveal">
-        <div class="skill-group-title">ML / Deep Learning</div>
-        <div class="skill-pills">
-          <span class="skill-pill">PyTorch</span>
-          <span class="skill-pill">TensorFlow</span>
-          <span class="skill-pill">Keras</span>
-          <span class="skill-pill">Scikit-learn</span>
-          <span class="skill-pill">XGBoost</span>
-        </div>
-      </div>
-
-      <div class="skill-group reveal">
-        <div class="skill-group-title">Generative AI</div>
-        <div class="skill-pills">
-          <span class="skill-pill">Hugging Face</span>
-          <span class="skill-pill">RAG</span>
-          <span class="skill-pill">Vector Search</span>
-          <span class="skill-pill">Text Embeddings</span>
-          <span class="skill-pill">LLMs</span>
-        </div>
-      </div>
-
-      <div class="skill-group reveal">
-        <div class="skill-group-title">Data & Analysis</div>
-        <div class="skill-pills">
-          <span class="skill-pill">Pandas</span>
-          <span class="skill-pill">NumPy</span>
-          <span class="skill-pill">Matplotlib</span>
-          <span class="skill-pill">Seaborn</span>
-          <span class="skill-pill">Feature Engineering</span>
-        </div>
-      </div>
-
-      <div class="skill-group reveal">
-        <div class="skill-group-title">Systems & Tools</div>
-        <div class="skill-pills">
-          <span class="skill-pill">Git</span>
-          <span class="skill-pill">Linux</span>
-          <span class="skill-pill">Docker</span>
-          <span class="skill-pill">Flask</span>
-          <span class="skill-pill">STL</span>
-        </div>
-      </div>
-
-      <div class="skill-group reveal">
-        <div class="skill-group-title">Finance Domain</div>
-        <div class="skill-pills">
-          <span class="skill-pill">Market Microstructure</span>
-          <span class="skill-pill">Order Books</span>
-          <span class="skill-pill">Credit Risk</span>
-          <span class="skill-pill">Algo Trading</span>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- CERTIFICATIONS -->
-  <section id="certifications">
-    <div class="section-label">05 — Certifications</div>
-    <h2 class="section-title reveal">Credentials</h2>
-    <div class="certs-grid">
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">🤖</div>
-        <div>
-          <div class="cert-title">AI Engineer Core Track: LLM Engineering, RAG, QLoRA, Agents</div>
-          <div class="cert-issuer">Udemy</div>
-        </div>
-      </div>
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">🧠</div>
-        <div>
-          <div class="cert-title">Machine Learning with Python</div>
-          <div class="cert-issuer">IBM</div>
-        </div>
-      </div>
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">📊</div>
-        <div>
-          <div class="cert-title">Data Science Essentials</div>
-          <div class="cert-issuer">Cisco</div>
-        </div>
-      </div>
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">📈</div>
-        <div>
-          <div class="cert-title">Quantitative and Qualitative Research in Finance</div>
-          <div class="cert-issuer">The Open University</div>
-        </div>
-      </div>
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">🏦</div>
-        <div>
-          <div class="cert-title">Quantitative Research Job Simulation</div>
-          <div class="cert-issuer">J.P. Morgan (Forage)</div>
-        </div>
-      </div>
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">⚡</div>
-        <div>
-          <div class="cert-title">Algorithmic Trading & Quantitative Analysis Using Python</div>
-          <div class="cert-issuer">Udemy</div>
-        </div>
-      </div>
-
-      <div class="cert-card reveal">
-        <div class="cert-icon">🗄️</div>
-        <div>
-          <div class="cert-title">SQL for Beginners</div>
-          <div class="cert-issuer">Udemy</div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section id="contact">
-    <div class="section-label">06 — Contact</div>
-    <div class="contact-inner reveal">
-      <div class="contact-text">
-        <h2 class="section-title">Let's build<br>something <em>together</em></h2>
-        <p>
-          I'm actively looking for full-time roles and internships in machine learning engineering,
-          quantitative research, and AI systems. Feel free to reach out — I respond quickly.
-        </p>
-        <div class="contact-links">
-          <a href="mailto:chatleykanav@gmail.com" class="contact-link">
-            <span class="cl-icon">✉️</span>
-            <div>
-              <div class="cl-label">Email</div>
-              <div>chatleykanav@gmail.com</div>
-            </div>
-          </a>
-          <a href="https://linkedin.com/in/kanav-chatley" target="_blank" class="contact-link">
-            <span class="cl-icon">💼</span>
-            <div>
-              <div class="cl-label">LinkedIn</div>
-              <div>linkedin.com/in/kanav-chatley</div>
-            </div>
-          </a>
-          <a href="https://github.com/Kanav-C" target="_blank" class="contact-link">
-            <span class="cl-icon">🐙</span>
-            <div>
-              <div class="cl-label">GitHub</div>
-              <div>github.com/Kanav-C</div>
-            </div>
-          </a>
-          <a href="tel:+919781810999" class="contact-link">
-            <span class="cl-icon">📱</span>
-            <div>
-              <div class="cl-label">Phone</div>
-              <div>+91 9781810999</div>
-            </div>
-          </a>
-        </div>
-      </div>
-      <div class="contact-form-area">
-        <div class="form-title">Send a message</div>
-        <form onsubmit="handleSubmit(event)">
-          <div class="form-group">
-            <label>Your Name</label>
-            <input type="text" placeholder="Jane Smith" required />
-          </div>
-          <div class="form-group">
-            <label>Your Email</label>
-            <input type="email" placeholder="jane@company.com" required />
-          </div>
-          <div class="form-group">
-            <label>Message</label>
-            <textarea rows="5" placeholder="I'd like to discuss..." required></textarea>
-          </div>
-          <button type="submit" class="form-submit">Send Message →</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-copy">© 2026 Kanav Chatley. All rights reserved.</div>
-    <div class="footer-right">Designed & built with ♥</div>
-  </footer>
-
-  <script>
-    // Scroll reveal
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => entry.target.classList.add('visible'), i * 60);
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    reveals.forEach(el => observer.observe(el));
-
-    // Form handler
-    function handleSubmit(e) {
-      e.preventDefault();
-      const btn = e.target.querySelector('.form-submit');
-      btn.textContent = 'Sent! ✓';
-      btn.style.background = '#22c55e';
-      btn.style.color = '#fff';
-      setTimeout(() => {
-        btn.textContent = 'Send Message →';
-        btn.style.background = '';
-        btn.style.color = '';
-        e.target.reset();
-      }, 3000);
-    }
-
-    // Active nav highlight
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-links a');
-    window.addEventListener('scroll', () => {
-      let current = '';
-      sections.forEach(s => {
-        if (window.scrollY >= s.offsetTop - 100) current = s.id;
-      });
-      navLinks.forEach(a => {
-        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--amber)' : '';
-      });
-    });
-  </script>
+  // Form
+  function handleSubmit(e){
+    e.preventDefault();
+    const btn=e.target.querySelector('.f-submit');
+    btn.textContent='✓ message_sent';btn.style.background='#00ff9d';
+    setTimeout(()=>{btn.textContent='./send --now';btn.style.background='';e.target.reset();},3000);
+  }
+</script>
 </body>
 </html>
