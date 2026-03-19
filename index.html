@@ -481,11 +481,11 @@
     </div>
     <div class="contact-form">
       <div class="form-hdr">send_message.sh</div>
-      <form onsubmit="handleSubmit(event)">
-        <div class="fg"><label>Your Name</label><input type="text" placeholder="Jane Smith" required /></div>
-        <div class="fg"><label>Your Email</label><input type="email" placeholder="jane@firm.com" required /></div>
-        <div class="fg"><label>Message</label><textarea rows="5" placeholder="I'd like to discuss a quant role..." required></textarea></div>
-        <button type="submit" class="f-submit">./send --now</button>
+      <form id="contact-form" action="https://formspree.io/f/xzdjobeg" method="POST">
+        <div class="fg"><label>Your Name</label><input type="text" name="name" placeholder="Jane Smith" required /></div>
+        <div class="fg"><label>Your Email</label><input type="email" name="email" placeholder="jane@firm.com" required /></div>
+        <div class="fg"><label>Message</label><textarea name="message" rows="5" placeholder="I'd like to discuss a quant role..." required></textarea></div>
+        <button type="submit" class="f-submit" id="submit-btn">./send --now</button>
       </form>
     </div>
   </div>
@@ -530,13 +530,39 @@
     links.forEach(a=>{a.style.color=a.getAttribute('href')==='#'+cur?'var(--green)':'';});
   });
 
-  // Form
-  function handleSubmit(e){
+  // Form — Formspree
+  const form = document.getElementById('contact-form');
+  const btn = document.getElementById('submit-btn');
+  form.addEventListener('submit', async function(e) {
     e.preventDefault();
-    const btn=e.target.querySelector('.f-submit');
-    btn.textContent='✓ message_sent';btn.style.background='#00ff9d';
-    setTimeout(()=>{btn.textContent='./send --now';btn.style.background='';e.target.reset();},3000);
-  }
+    btn.textContent = 'sending...';
+    btn.style.opacity = '0.7';
+    btn.disabled = true;
+    try {
+      const res = await fetch('https://formspree.io/f/xzdjobeg', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(form)
+      });
+      if (res.ok) {
+        btn.textContent = '✓ message_sent';
+        btn.style.background = '#00ff9d';
+        btn.style.opacity = '1';
+        form.reset();
+        setTimeout(() => { btn.textContent = './send --now'; btn.style.background = ''; btn.disabled = false; }, 4000);
+      } else {
+        btn.textContent = '✗ error — try email';
+        btn.style.background = 'var(--red)';
+        btn.style.opacity = '1';
+        setTimeout(() => { btn.textContent = './send --now'; btn.style.background = ''; btn.disabled = false; }, 4000);
+      }
+    } catch {
+      btn.textContent = '✗ error — try email';
+      btn.style.background = 'var(--red)';
+      btn.style.opacity = '1';
+      setTimeout(() => { btn.textContent = './send --now'; btn.style.background = ''; btn.disabled = false; }, 4000);
+    }
+  });
 </script>
 </body>
 </html>
